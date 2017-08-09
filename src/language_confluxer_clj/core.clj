@@ -20,7 +20,8 @@
                    (remove empty?)))))
 
 (defn variance [avg lst]
-  (/ (reduce #(+ %1 (* (- avg %2) (- avg %2))) 0 lst) (count lst)))
+  (when (empty? lst) (throw (ex-info "Cannot find the variance of an empty list." {:causes #{:empty-list}})))
+  (/ (reduce #(+ %1 (* (- %2 avg) (- %2 avg))) 0 lst) (count lst)))
 
 (defn avg-min-max-wordlen [words]
   (let [word-count (count words)
@@ -33,14 +34,17 @@
 (defn generate-map [input]
   (let [words (str/split input #" ")
         pairmap (reduce (fn [m [a b c]]
-                          (assoc m (str a b) (conj (get m (str a b) []) c))) {}
-                        (partition 3 1 input))
+                          (assoc m (str a b) (conj (get m (str a b) []) c)
+                                 :start-pair (if (= a \space)
+                                               (conj (get m :start-pair '()) (str a b))
+                                               (:start-pair m)))) {}
+                        (partition 3 1 (str " " input)))
         [minlen maxlen] (avg-min-max-wordlen words)]
 
-    (hash-map :pairmap pairmap
+    (hash-map :pairmap (dissoc pairmap :start-pair)
               :minlen minlen
               :maxlen maxlen
-              :start-pairs (filter #(= (first %) \space) (keys pairmap)))))
+              :start-pairs (:start-pair pairmap))))
 
 (defn new-word [{:keys [pairmap minlen maxlen] :as data} seed]
   (let [pair (apply str (take-last 2 seed))

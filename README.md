@@ -15,7 +15,7 @@ can create random words that resemble the sample input.
 ### The Language Confluxer
 
 ```bash
-$ lein run -- lc -n 10 -f datafile.txt
+$ lein trampoline run -- lc -n 10 -f datafile.txt
 ```
 
 This reads a wordlist, does some cleanup, and then generates words to standard
@@ -25,7 +25,7 @@ awhile, and expect to wait a few seconds for inputs over a megabyte.
 ### Write trigram map to file.
 
 ```bash
-$ lein run -- compress -f datafile.txt -o datafile.txt.out
+$ lein trampoline run -- compress -f datafile.txt -o datafile.txt.out
 ```
 
 This does the beginning part of `lc`, but instead of generating words, it dumps

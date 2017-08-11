@@ -14,11 +14,10 @@
               (->> lines
                    (map #(-> %
                              (str/replace #"#.*" "")
-                             (str/replace #"^\s*" "")
-                             (str/replace #"\s*$" "")
                              (str/replace #"[\W\d&&[^\s'-]]" " ")
-                             (str/replace #"(?<!\w)'(?!\w)" "")
-                             (str/replace #"\s+" " ")))
+                             (str/replace #"\s+" " ")
+                             (str/replace #"(( ')|(' )|(^')|('$))" "")
+                             (str/replace #"((^\s*)|(\s*$))" "")))
                    (remove empty?)))))
 
 (defn variance [avg lst]

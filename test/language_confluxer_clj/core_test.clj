@@ -19,9 +19,9 @@
   (testing "one word"
     (is (= [10.0 10.0] (avg-min-max-wordlen  ["automobile"]))))
   (testing "example tests"
-    (is (= [1 (+ 3 (Math/sqrt 8))]
+    (is (= [2 (+ 3 (Math/sqrt 8))]
            (avg-min-max-wordlen ["a" "bb" "ccc" "dddd" "eeeee"])))
-    (is (= [(- 4 (Math/sqrt (/ 40 9))) (+ 4 (Math/sqrt (/ 40 9)))]
+    (is (= [2 (+ 4 (Math/sqrt (/ 40 9)))]
            (avg-min-max-wordlen ["The" "quick" "brown" "fox" "jumped" "over"
                                  "the" "lazy" "dog"])))))
 
@@ -40,9 +40,22 @@
                       "ba" [\space \space \a \b] "aa" [\b \space]
                       "bb" [\space \a]}
             :start-pairs (list " b" " b" " a" " b" " a" " a" " b" " a" " b" " a")
-            :minlen 1
+            :minlen 2
             :maxlen 4.0}
            (generate-map "a b ab ba aab aba baa abb bab bba")))))
+
+(deftest compress-test
+  (testing "example compression"
+    (is (= " a=b3a , b=ba3 ,a =b2a2,aa=b ,ab=ba 3,b =b3a2,ba=ba 2,bb=a \n b5, a5\nmin=2\nmax=4.0\n"
+           (output-map (generate-map "a b ab ba aab aba baa abb bab bba")))))
+  (testing "there-and-back"
+    (let [[pm sp & _] (clojure.string/split
+                       (output-map (generate-map "a b ab ba aab aba baa abb bab bba")) #"\n")
+          m (generate-map "a b ab ba aab aba baa abb bab bba")]
+      (is (= (set (:start-pairs m))
+             (set (uncompress-start-pairs sp))))
+      (is (= (apply hash-map (mapcat (fn [[a b]] [a (reverse (sort (map str b)))]) (:pairmap m)))
+             (uncompress-pairmap pm))))))
 
 (deftest assemble-fix-test
   (testing "basic examples"

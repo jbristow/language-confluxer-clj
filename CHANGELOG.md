@@ -7,3 +7,5 @@ All notable changes to this project will be documented in this file. This change
 * Initial development.
 * Added lc
 * Added fix
+* Added map compression/decompression.
+* Added CLI functionality.

@@ -1,5 +1,5 @@
 (ns language-confluxer-clj.datafile-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [clojure.test :refer [are deftest is testing]]
             [language-confluxer-clj.datafile :refer :all]))
 
 (deftest compress-sorted-test
@@ -30,3 +30,22 @@
            (uncompress-pairmap "aa=a3bc2,bb=a,cc=a2 4b"))))
   (testing "2 digit numbers"
     (is (= {"aa" (concat (repeat 124 "z") ["a"] (repeat 55 "j"))} (uncompress-pairmap "aa=z124aj55")))))
+
+(deftest uncompress-start-pairs-test
+  (testing "none"
+    (is (empty? (uncompress-start-pairs ""))))
+  (testing "single"
+    (are [input expected] (= expected (uncompress-start-pairs input))
+      " a" [" a"]
+      " j" [" j"]
+      " k23" (repeat 23 " k")
+      " -3" [" -" " -" " -"]))
+  (testing "others"
+    (are [input expected] (= expected (uncompress-start-pairs input))
+      " a b" [" a" " b"]
+      " j c4" [" j" " c" " c" " c" " c"]
+      " k23 c123456 d e f2 g" (concat (repeat 23 " k")
+                                      (repeat 123456 " c")
+                                      '(" d" " e" " f" " f" " g"))
+
+      " -3" [" -" " -" " -"])))

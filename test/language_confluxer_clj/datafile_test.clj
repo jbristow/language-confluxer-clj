@@ -12,36 +12,36 @@
     (testing "shuffle compress"
       (dotimes [_ 10]
         (is (= compressed (compress-sorted (shuffle data))))))
-    (testing "uncompress"
+    (testing "decompress"
       (is (= (reverse data)
-             (uncompress (map #(vector (format "%s%d" (first %) (second %))
+             (decompress (map #(vector (format "%s%d" (first %) (second %))
                                        (first %)
                                        (str (second %)))
                               compressed)))))))
 
-(deftest uncompress-pairmap-test
-  (testing "single pairmap"
+(deftest decompress-pairs-test
+  (testing "single pairs"
     (is (= {"aa" ["a" "a" "a" "b" "c" "c"]}
-           (uncompress-pairmap "aa=a3bc2"))))
-  (testing "multiple pairmaps"
+           (decompress-pairs "aa=a3bc2"))))
+  (testing "multiple pairs"
     (is (= {"aa" ["a" "a" "a" "b" "c" "c"]
             "bb" ["a"]
             "cc" ["a" "a" " " " " " " " " "b"]}
-           (uncompress-pairmap "aa=a3bc2,bb=a,cc=a2 4b"))))
+           (decompress-pairs "aa=a3bc2,bb=a,cc=a2 4b"))))
   (testing "2 digit numbers"
-    (is (= {"aa" (concat (repeat 124 "z") ["a"] (repeat 55 "j"))} (uncompress-pairmap "aa=z124aj55")))))
+    (is (= {"aa" (concat (repeat 124 "z") ["a"] (repeat 55 "j"))} (decompress-pairs "aa=z124aj55")))))
 
-(deftest uncompress-start-pairs-test
+(deftest decompress-start-pairs-test
   (testing "none"
-    (is (empty? (uncompress-start-pairs ""))))
+    (is (empty? (decompress-start-pairs ""))))
   (testing "single"
-    (are [input expected] (= expected (uncompress-start-pairs input))
+    (are [input expected] (= expected (decompress-start-pairs input))
       " a" [" a"]
       " j" [" j"]
       " k23" (repeat 23 " k")
       " -3" [" -" " -" " -"]))
   (testing "others"
-    (are [input expected] (= expected (uncompress-start-pairs input))
+    (are [input expected] (= expected (decompress-start-pairs input))
       " a b" [" a" " b"]
       " j c4" [" j" " c" " c" " c" " c"]
       " k23 c123456 d e f2 g" (concat (repeat 23 " k")

@@ -13,6 +13,6 @@
                        (datafile/output-map (charmap/generate-map "a b ab ba aab aba baa abb bab bba")) #"\n")
           m (charmap/generate-map "a b ab ba aab aba baa abb bab bba")]
       (is (= (set (:start-pairs m))
-             (set (datafile/uncompress-start-pairs sp))))
-      (is (= (apply hash-map (mapcat (fn [[a b]] [a (reverse (sort (map str b)))]) (:pairmap m)))
-             (datafile/uncompress-pairmap pm))))))
+             (set (datafile/decompress-start-pairs sp))))
+      (is (= (apply hash-map (mapcat (fn [[a b]] [a (reverse (sort (map str b)))]) (:pairs m)))
+             (datafile/decompress-pairs pm))))))

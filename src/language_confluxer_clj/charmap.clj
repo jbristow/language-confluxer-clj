@@ -26,18 +26,18 @@
 
 (defn generate-map [input]
   (let [words (str/split input #" ")
-        pairmap (reduce (fn [m [a b c]]
-                          (assoc m (str a b) (conj (get m (str a b) []) c)
-                                 :start-pair (if (= a \space)
-                                               (conj (get m :start-pair '()) (str a b))
-                                               (:start-pair m)))) {}
-                        (partition 3 1 (str " " input)))
-        [minlen maxlen] (avg-min-max-wordlen words)]
+        pairs (reduce (fn [m [a b c]]
+                        (assoc m (str a b) (conj (get m (str a b) []) c)
+                               :start-pair (if (= a \space)
+                                             (conj (get m :start-pair '()) (str a b))
+                                             (:start-pair m)))) {}
+                      (partition 3 1 (str " " input)))
+        [min-len max-len] (avg-min-max-wordlen words)]
 
-    (hash-map :pairmap (dissoc pairmap :start-pair)
-              :minlen minlen
-              :maxlen maxlen
-              :start-pairs (:start-pair pairmap))))
+    (hash-map :pairs (dissoc pairs :start-pair)
+              :min-len min-len
+              :max-len max-len
+              :start-pairs (:start-pair pairs))))
 
 (defn populate-map-from-sample [input]
   (generate-map (clean-input input)))

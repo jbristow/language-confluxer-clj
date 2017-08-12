@@ -24,3 +24,18 @@
     (is (= [2 (+ 4 (Math/sqrt (/ 40 9)))]
            (avg-min-max-wordlen ["The" "quick" "brown" "fox" "jumped" "over"
                                  "the" "lazy" "dog"])))))
+
+(deftest clean-input-test
+  (testing "ignore comments"
+    (is (= "line one line line five"
+           (clean-input ["line one" "# line two" " # line three" " line #four" "line five #"]))))
+  (testing "no strange characters"
+    (is (= "hello" (clean-input ["hello.,\""]))))
+  (testing "keep contractions"
+    (is (= "I can't find em over there in the bushes by the Jones's house"
+           (clean-input ["I can't find 'em 'over there' in the 'bushes' by the Jones's house."]))))
+  (testing "whitespace"
+    (is (= "one two three four five six seven eight nine ten"
+           (clean-input ["one two  three"
+                         "    four    five     "
+                         "six     seven eight\t\tnine ten"])))))

@@ -7,8 +7,8 @@
                  (map #(-> %
                            (str/replace #"#.*" "")
                            (str/replace #"[\W\d&&[^\s'-]]" " ")
+                           (str/replace #"(( ')|(' )|(^')|('$))" " ")
                            (str/replace #"\s+" " ")
-                           (str/replace #"(( ')|(' )|(^')|('$))" "")
                            (str/replace #"((^\s*)|(\s*$))" "")))
                  (remove empty?))))
 
